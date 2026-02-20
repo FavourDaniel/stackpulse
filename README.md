@@ -36,11 +36,6 @@ chmod +x install.sh
 ```
 
 2. **Run the installer**
-- On macOS: 
-```bash
-./install.sh
-```
-- On Linux: 
 ```bash
 sudo ./install.sh
 ```
@@ -100,8 +95,8 @@ If no domain is specified, it shows all configured virtual hosts and mapped port
 ```bash
 stackpulse -u
 stackpulse -u [USER]
-stackpulse --users [USER]
-stackpulse --users all
+stackpulse --user [USER]
+stackpulse --user all
 ```
 This displays detailed information about the specified user.
 If no user is specified, it shows all regular system users and their last login times.
@@ -191,3 +186,6 @@ Ensure you have sudo/root access.
 
 ### 3. Verify dependencies
 Check Docker/Nginx if related modules return empty.
+
+
+## Uninstall
