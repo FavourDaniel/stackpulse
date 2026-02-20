@@ -189,3 +189,15 @@ Check Docker/Nginx if related modules return empty.
 
 
 ## Uninstall
+If you need to remove StackPulse, simply run the uninstaller provided in the repository:
+
+```bash
+sudo chmod +x uninstall.sh
+sudo ./uninstall.sh
+```
+The uninstaller will clean up:
+
+- The stackpulse binary.
+- All background timers (systemd or launchd).
+- Telemetry log files and rotation configurations.
+- Temporary cache files.
