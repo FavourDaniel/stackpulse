@@ -189,7 +189,7 @@ Check Docker/Nginx if related modules return empty.
 
 
 ## Uninstall
-If you need to remove StackPulse, simply run the uninstaller provided in the repository:
+To remove all traces of StackPulse, including background timers and log rotation configs, simply run the uninstaller provided in the repository:
 
 ```bash
 sudo chmod +x uninstall.sh

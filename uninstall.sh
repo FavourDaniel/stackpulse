@@ -48,6 +48,7 @@ else
     USER_HOME=$(eval echo "~$REAL_USER")
     PLIST="$USER_HOME/Library/LaunchAgents/com.stackpulse.monitor.plist"
     if [[ -f "$PLIST" ]]; then
+        # Use sudo -u to talk to the user's launchctl session
         sudo -u "$REAL_USER" launchctl unload "$PLIST" >/dev/null 2>&1 || true
         rm -f "$PLIST"
     fi
@@ -56,10 +57,9 @@ print_done
 
 # 2. Remove Binary
 print_step "Deleting StackPulse binary..."
-BIN_DIR="/usr/local/bin"
-[[ "$PLATFORM" == "mac" && -d "/opt/homebrew/bin" ]] && BIN_DIR="/opt/homebrew/bin"
-rm -f "$BIN_DIR/stackpulse"
+rm -f "/usr/local/bin/stackpulse" "/opt/homebrew/bin/stackpulse" "/usr/bin/stackpulse"
 print_done
+
 
 # 3. Cleanup Logs and Rotation Configs
 print_step "Purging telemetry logs & rotation configs..."
@@ -72,6 +72,7 @@ else
     rm -f /etc/newsyslog.d/stackpulse.conf
 fi
 print_done
+
 
 # 4. Remove Temp Files
 print_step "Cleaning temporary artifacts..."

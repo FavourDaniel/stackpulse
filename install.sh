@@ -29,7 +29,6 @@ print_step() { printf "  ${INFO}  %-35s" "$1"; }
 print_done() {
     local suffix="${1:-}"
     if [[ -n "$suffix" ]]; then
-        # Use %22s to right-align the Docker status note
         printf "${DIM}%22s${RESET} ${BOLD}${GREEN}[ DONE ]${RESET}\n" "$suffix"
     else
         printf "%22s ${BOLD}${GREEN}[ DONE ]${RESET}\n" ""
@@ -166,7 +165,6 @@ check_network
 check_disk
 
 # --- DYNAMIC BOX PADDING FIX ---
-# Expanded to 68-char internal width to accommodate the new status alignment.
 BOX_PADDING="                           " 
 [[ "$PLATFORM" == "mac" ]] && BOX_PADDING="                          " 
 
@@ -315,7 +313,7 @@ EOF
 fi
 
 
-# [5/5] Nginx Service Management (Fixes the Root Conflict)
+# [5/5] Nginx Service Management
 print_step "Synchronizing Nginx service..."
 if [[ "$PLATFORM" == "linux" ]]; then
     safe_systemctl enable nginx

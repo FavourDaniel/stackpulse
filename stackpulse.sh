@@ -103,10 +103,9 @@ get_ports() {
         ) | format_table 22
 
 elif [ "$OS" = "Darwin" ]; then
-        # --- NEW MACOS LOGIC ---
+        # --- MACOS LOGIC ---
         (
           printf "Port\tProto\tBind\tScope\tUser\tPID\tProcess\tState\n"
-          # Standardizing lsof output to ensure we capture all active sockets
           sudo lsof -i -P -n | grep -Ei "LISTEN|UDP|ESTABLISHED" | awk -v target="$target_port" '
           {
               # macOS lsof output: $9 is NAME (e.g., 127.0.0.1:5007 or *:80)
@@ -144,8 +143,6 @@ elif [ "$OS" = "Darwin" ]; then
 }
 
 
-
-
 get_nginx_info() {
     local query="${1:-}"
     local conf_dir="/etc/nginx"
@@ -172,7 +169,7 @@ get_nginx_info() {
                 local p_port=$(echo "$active_lines" | grep -w "listen" | head -n1 | awk '{print $2}' | tr -d ';' | sed 's/.*://')
                 [[ -z "$p_port" ]] && p_port="80"
                 
-                # 2. Server Name (Hardened regex: grep -w ensures we dont catch server_names_hash_...)
+                # 2. Server Name
                 local s_name=$(echo "$active_lines" | grep -w "server_name" | head -n1 | awk '{print $2}' | tr -d ';')
                 [[ -z "$s_name" ]] && s_name="localhost"
                 
@@ -190,7 +187,6 @@ get_nginx_info() {
         ) | sort -u | format_table 60
     else
         # --- DETAIL VIEW ---
-        # Find the file, ensuring we match the exact word server_name
         local target_conf=""
         if [[ "$query" == "default" || "$query" == "localhost" || "$query" == "_" ]]; then
             target_conf=$(sudo grep -l "listen" "$conf_dir/sites-available/default" 2>/dev/null || sudo grep -rl "listen" "$conf_dir" $exclude_pattern | head -n 1)
@@ -244,8 +240,6 @@ get_nginx_info() {
 }
 
 
-
-
 get_docker_info() {
     local target=$1
     local DOCKER_CMD="docker"
@@ -284,13 +278,10 @@ get_docker_info() {
 }
 
 
-
-
 get_user_info() {
     local target_user="${1:-}"
     
     if [[ "$OS" == "Darwin" ]]; then
-        # Global counters (outside subshell)
         local g_total=0 g_real=0 g_system=0
         local tmp_file="/tmp/sp_mac_counts"
         
@@ -350,7 +341,7 @@ get_user_info() {
         fi
 
     else
-        # --- LINUX LOGIC (UNTOUCHED) ---
+        # --- LINUX LOGIC ---
         ( printf "User\tType\tUID\tGroup\tHome\tLast Login\tSudo\n"
         local sudo_users=$(grep -Po '^sudo:.*:\K.*' /etc/group | tr ',' '|')
         awk -F: -v u="$target_user" -v sudo_list="$sudo_users" '
@@ -370,8 +361,6 @@ get_user_info() {
         if [ -f /tmp/sp_counts ]; then cat /tmp/sp_counts && rm /tmp/sp_counts; fi
     fi
 }
-
-
 
 
 time_range_activity() {
@@ -481,11 +470,9 @@ time_range_activity() {
 }
 
 
-
 # ----------------------------------
 # Main Execution
 # ----------------------------------
-
 
 show_help() {
     cat << EOF
@@ -513,9 +500,6 @@ Note: Root privileges (sudo) may be required for Port and Log modules.
 
 EOF
 }
-
-
-
 
 case "${1:-}" in
     -p|--port)            get_ports "${2:-}" ;;
